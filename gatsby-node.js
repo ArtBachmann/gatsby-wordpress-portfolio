@@ -11,10 +11,7 @@ const slash = require(`slash`)
 // Will create pages for WordPress posts (route : /post/{slug})
 exports.createPages = ({ graphql, actions }) => {
   const { createPage, createRedirect } = actions
-  createRedirect({
-    fromPath: '/', toPath: '/home',
-    redirectInBrowser: true, isPermanent: true
-  })
+  createRedirect({ fromPath: '/', toPath: '/home', redirectInBrowser: true, isPermanent: true })
   return new Promise((resolve, reject) => {
     // The “graphql” function allows us to run arbitrary
     // queries against the local WordPress graphql schema. Think of
@@ -56,7 +53,8 @@ exports.createPages = ({ graphql, actions }) => {
         _.each(result.data.allWordpressPage.edges, edge => {
           // Gatsby uses Redux to manage its internal state.
           // Plugins and sites can use functions like "createPage"
-          // to interact with Gatsby.          
+          // to interact with Gatsby.
+
           createPage({
             // Each page is required to have a `path` as well
             // as a template component. The `context` is
@@ -70,26 +68,29 @@ exports.createPages = ({ graphql, actions }) => {
       })
       // ==== END PAGES ====
 
-      // ==== POSTS (WORDPRESS NATIVE AND ACF) ====
+      // ==== PORTFOLIO ====
       .then(() => {
         graphql(
           `
             {
-                allWordpressWpPortfolio {
-                  edges {
-                    node {
-                      id        
-                      title
-                      slug
-                      excerpt
-                      content
-                      featured_media{
-                        source_url
-                      }
+              allWordpressWpPortfolio{
+                edges{
+                  node{
+                    id
+                    title
+                    slug
+                    excerpt
+                    content
+                    featured_media{
+                      source_url
+                    }
+                    acf{
+                      portfolio_url
                     }
                   }
                 }
-              }            
+              }
+            }
           `
         ).then(result => {
           if (result.errors) {
@@ -107,12 +108,62 @@ exports.createPages = ({ graphql, actions }) => {
               context: edge.node,
             })
           })
+        })
+      })
+      // ==== END PORTFOLIO ====
+      // ==== BLOG POSTS ====
+      .then(() => {
+        graphql(`
+            {
+              allWordpressPost{
+                edges{
+                  node{
+                    excerpt
+                    wordpress_id
+                    date(formatString: "Do MMM YYYY HH:mm")
+                    title
+                    content
+                    slug
+                  }
+                }
+              }
+            }
+          `).then(result => {
+          if (result.errors) {
+            console.log(result.errors)
+            reject(result.errors)
+          }
+
+          const posts = result.data.allWordpressPost.edges
+          const postsPerPage = 2
+          const numberOfPages = Math.ceil(posts.length / postsPerPage)
+          const blogPostListTemplate = path.resolve('./src/templates/blogPostList.js')
+
+          Array.from({ length: numberOfPages }).forEach((page, index) => {
+            createPage({
+              component: slash(blogPostListTemplate),
+              path: index === 0 ? '/blog' : `/blog/${index + 1}`,
+              context: {
+                posts: posts.slice(index * postsPerPage, (index * postsPerPage) + postsPerPage),
+                numberOfPages,
+                currentPage: index + 1
+              }
+            })
+          })
+
+          const pageTemplate = path.resolve("./src/templates/page.js")
+          _.each(posts, (post) => {
+            createPage({
+              path: `/post/${post.node.slug}`,
+              component: slash(pageTemplate),
+              context: post.node
+            })
+          })
           resolve()
         })
       })
-    // ==== END POSTS ====
   })
 }
 
-// allWordpressWpPortfolio
-// allWordpressWpPortfolio
+// blogPostList
+// blogPostList

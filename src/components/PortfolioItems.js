@@ -47,7 +47,7 @@ const PortfolioItems = () => {
               <div dangerouslySetInnerHTML={{ __html: portfolioItem.node.excerpt }} />
               <Link to={`/portfolio/${portfolioItem.node.slug}`}>
                 Read More..
-        </Link>
+              </Link>
             </PortfolioItem>
           ))}
         </PortfolioItemsWrapper>)} />

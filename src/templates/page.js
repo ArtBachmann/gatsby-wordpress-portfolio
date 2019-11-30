@@ -6,5 +6,6 @@ export default ({ pageContext }) => (
   <Layout>
     <h2 dangerouslySetInnerHTML={{ __html: pageContext.title }} />
     <hp dangerouslySetInnerHTML={{ __html: pageContext.content }} />
+    {/* <PortfolioItems /> */}
   </Layout>
 )

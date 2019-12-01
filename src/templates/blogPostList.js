@@ -27,6 +27,13 @@ const blogPostList = ({ pageContext }) => (
           {post.node.date}
         </small>
         <p dangerouslySetInnerHTML={{ __html: post.node.excerpt }} />
+        <div>
+          <FeaturedImage src={pageContext.acf.portfolio_img.source_url} />
+        </div>
+        <div dangerouslySetInnerHTML={{ __html: pageContext.content }} />
+        <div>
+          <FeaturedImage src={pageContext.acf.portfolio_img_gallery.source_url} />
+        </div>
         <Link to={`/post/${post.node.slug}`}>
           Read More...
       </Link>

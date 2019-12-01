@@ -86,6 +86,11 @@ exports.createPages = ({ graphql, actions }) => {
                     }
                     acf{
                       portfolio_url
+                      portfolio_img {
+                        source_url
+                        media_type
+                        link                                                
+                      }                     
                     }
                   }
                 }
@@ -121,11 +126,19 @@ exports.createPages = ({ graphql, actions }) => {
                     excerpt
                     wordpress_id
                     date(formatString: "Do MMM YYYY HH:mm")
-                    title
+                    title 
                     content
                     slug
                     featured_media{
                       source_url
+                    }
+                    acf{
+                      portfolio_url
+                      portfolio_img {
+                        source_url
+                        media_type
+                        link                                                
+                      }                     
                     }
                   }
                 }
@@ -170,3 +183,5 @@ exports.createPages = ({ graphql, actions }) => {
 
 // blogPostList
 // blogPostList
+//   portfolio_img
+// portfolio_img_gallery

@@ -25,6 +25,9 @@ export default ({ pageContext }) => (
       rel='noopener noreferrer' >
       {pageContext.acf.portfolio_url}
     </a>
+    <div>
+      <FeaturedImage src={pageContext.acf.portfolio_img.source_url} />
+    </div>
     <div dangerouslySetInnerHTML={{ __html: pageContext.content }} />
   </Layout>
 )
